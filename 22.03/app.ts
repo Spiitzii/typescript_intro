@@ -1,85 +1,83 @@
-// das Ausrufezeichen weist auf typescript an, dass wir
-// uns sicher sind, das es sich hier nicht um NULL
+// das Ausrufezeichen weist Typescript an, dass wir
+// uns sicher sind, dass es sich hier nicht um NULL
 // handelt
 
-const farbenInput 
-    = document.getElementById('farbe')! as HTMLInputElement
+// mittels 'as' können wir Typescript versichern,
+// dass es sich um einen bestimmten Typen handeln wird
+
+const farbenInput
+  = document.getElementById('farbe')! as HTMLInputElement
+
 // console.log(farbenInput.value)
 
+// Wenn ich auf den Knopf klicke, dann soll in der Konsole
+// der Wert des TextInputs ausgegeben werden
 
-const form 
-    = document.getElementById('form')! as HTMLFormElement
+// Ich ziehe mir die Form aus dem Dokument; Variante 1
+const form
+  = document.getElementById('form')! as HTMLFormElement
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        console.log(farbenInput.value)
-    })
+// Ich ziehe mir die Form aus dem Dokument; Variante 2
+const form1
+  = document.querySelector('form')! as HTMLFormElement
+// wenn wir auf den Knopf drücken, wird ein submit-Event
+// ausgelöst. Wir hören, ob ein solches Event ausgelöst wird.
+// Wenn das Event ausgelöst wird, dann lesen wir den Wert
+// aus der Eingabe aus und geben sie aus.
 
-const obst = document.getElementsByName('obst')
+const obst = document.getElementsByName('obst') as NodeListOf<HTMLInputElement>
 
-const obst1 = obst[1] as HTMLInputElement
+const groesse = document.getElementById('groesse') as HTMLSelectElement
 
-// console.log(obst1.value, obst1.checked)
-
-
-for (let i = 0; i < obst.length; i = i + 1 /* i++ ODER i += 1 */){
-    const aktuellesObst = obst[i] as HTMLInputElement
-    console.log(aktuellesObst.value, aktuellesObst.checked)
-
-}
-
-
-// Teil 1: Beim Klick auf den Button "Absenden" die ausgewählte Schüsselgröße ausgeben
-const groesseSelect = document.getElementById('groesse')! as HTMLSelectElement
+const paragraph = document.getElementById('ergebnis') as HTMLParagraphElement
 
 form.addEventListener('submit', (e) => {
-    e.preventDefault(); // Standard-Formularverhalten verhindern
-    console.log(groesseSelect.value);
-});
+  // preventDefault verhindert das automatische
+  // neuladen der kompletten Seite
+  e.preventDefault()
 
 
-// Teil 2: Beim Klick auf den Button "Absenden" die ausgewählten Obstsorten ausgeben
-form.addEventListener('submit', (e) => {
-    e.preventDefault(); // Standard-Formularverhalten verhindern
 
-    // Alle Checkboxen mit dem Namen "obst" abrufen
-    const obstauswahl: string[] = [];
+  // const obst1 = obst[1] as HTMLInputElement
 
-    const obstInputs = document.getElementsByName('obst');
+  // console.log(obst1.value, obst1.checked)
 
-    
+  let angewähltesObst: string[] = []
 
-    for (let i = 0; i < obstInputs.length; i++) {
-        const checkbox = obstInputs[i] as HTMLInputElement;
-        if (checkbox.checked) {
-            obstauswahl.push(checkbox.value)
-        }
+  for (let i = 0; i < obst.length; i = i + 1 /* i++ ODER i += 1 */) {
+    // const aktuellesObst = obst[i]
+    // console.log(aktuellesObst.value, aktuellesObst.checked)
+  }
+
+  obst.forEach(aktuellesObst => {
+    if (aktuellesObst.checked === true) {
+      angewähltesObst.push(aktuellesObst.value)
     }
+  })
 
+  // unsere Eingaben 
+  console.log(farbenInput.value)
+  console.log(groesse.value)
+  console.log(angewähltesObst)
 
-    // Ausgabe der ausgewählten Obstsorten
-    console.log("Ausgewählte Obstsorten:", obstauswahl);
+  let ergebnis: string = 'Größe: ' + groesse.value + '\n'
+  ergebnis += 'Farbe: ' + farbenInput.value + '\n'
+  ergebnis += 'Obstsorten: ' + angewähltesObst.join(', ') + '\n'
+  ergebnis += 'Anzahl der Obstsorten: ' + angewähltesObst.length
 
+  let marcErgebnis = `
+  Größe: ${groesse.value}  \n
+  Farbe: ${farbenInput.value} 
+  Obstsorten: ${angewähltesObst.join(', ')} 
+  Anzahl: ${angewähltesObst.length}
+  `;
 
+  paragraph.textContent = marcErgebnis
 
+})
 
-
-// Teil 3: Erstelle einen Typ für die Inhalte der Obstschüssel
-type Obstschuessel = {
-    groesse: string,
-    farbe: string,
-    obst: string[]
-};
-
-
-const obstschuesselInhalt: Obstschuessel = {
-    groesse: groesseSelect.value,
-    farbe: farbenInput.value,
-    obst: obstauswahl
-   
-    
+type Obstschüssel = {
+  groesse: string,
+  farbe: string,
+  sorten: string[]
 }
-
-console.log("Obstschuessel;", obstschuesselInhalt)
-
-});
